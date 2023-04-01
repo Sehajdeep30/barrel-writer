@@ -31,7 +31,7 @@
 					v-model="generation_length">
 			</label>
 
-			<button class="outline" @click="fetch_suggestion()">get suggestion</button>
+			<button class="outline" @click="fetch_completion()">get suggestion</button>
 		</div>
 	</div>
 </template>
@@ -57,11 +57,11 @@ export default {
 
 	methods: {
 		print_values() {
-			console.log("http://localhost:8000/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
+			console.log("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
 		},
 		
 		async fetch_completion() {
-			const response = await fetch("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text, {mode: "no-cors"})
+			const response = await fetch("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text).then((res) => res.json())
 			console.log(response)
 			this.session_history.push(response);
 		},
