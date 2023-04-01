@@ -31,7 +31,7 @@
 					v-model="generation_length">
 			</label>
 
-			<button class="outline" @click="fetch_suggestion()">get suggestion</button>
+			<button class="outline" @click="fetch_completion()">get suggestion</button>
 		</div>
 	</div>
 </template>
@@ -56,27 +56,24 @@ export default {
 	},
 
 	methods: {
-		print_values() {
-			console.log("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
-		},
 		
 		async fetch_completion() {
-			const response = await fetch("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text).then((res) => res.json())
-			console.log(response)
-			this.session_history.push(response);
-		},
+			api_endpoint = "https://64a6-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io "
+			const request = new Request(api_endpoint, {
+				method: "GET",
+				body: JSON.stringify({
+					"model": this.model_type,
+					"length": this.generation_length,
+					"text": this.prompt_text
+				})
+			});
 
-		fetch_suggestion() {
-			var xmlHttp = new XMLHttpRequest();
-			xmlHttp.open(
-				"GET",
-				"https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text,
-				false
-			); // false for synchronous request
-    		xmlHttp.send( null );
-			console.log(JSON.parse(xmlHttp.responseText))
-    		this.session_history.push(JSON.parse(xmlHttp.responseText))
+
+			const response = await fetch(request)
+
+			console.log(response)
 		}
+
 	},
 
 	mounted() {
