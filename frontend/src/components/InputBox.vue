@@ -2,10 +2,11 @@
 
 	<form>
 		<div class="grid">
-			<select id="model" required v-model="model">
+			<select id="model" required v-model="model_type">
 				<option value="" selected>select a model</option>
-				<option value="scifi-speculative">SciFi and Sepculative Fiction</option>
-  				<option value="poetry">Poetry</option>
+				<option value="scifi">SciFi and Sepculative Fiction</option>
+  				<option value="philosophy">Philosophy</option>
+  				<option value="academia">Academia</option>
 			</select>
 
 			<label for="output-length">Output Length (10-100 chars)
@@ -31,7 +32,7 @@ export default {
 		return {
 			text: "",
 			generation_length: 50,
-			model: ""
+			model_type: ""
 		}
 	},
 
