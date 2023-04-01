@@ -59,7 +59,7 @@ export default {
 		
 		async fetch_completion() {
 			const request = new Request("https://64a6-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io/", {
-				method: "GET",
+				method: "POST",
 				body: JSON.stringify({
 					"model": this.model_type,
 					"length": this.generation_length,
