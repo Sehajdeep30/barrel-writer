@@ -61,10 +61,21 @@ export default {
 		},
 		
 		async fetch_completion() {
-			const response = await fetch(" https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
+			const response = await fetch("https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text, {mode: "no-cors"})
 			console.log(response)
 			this.session_history.push(response);
-		} 
+		},
+
+		fetch_suggestion() {
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.open(
+				"GET",
+				"https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text,
+				false
+			); // false for synchronous request
+    		xmlHttp.send( null );
+    		return xmlHttp.responseText;
+		}
 	},
 
 	mounted() {
