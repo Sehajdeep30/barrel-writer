@@ -61,7 +61,7 @@ export default {
 		},
 		
 		async fetch_completion() {
-			const response = await fetch("http://localhost:8000/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
+			const response = await fetch(" https://1409-157-37-189-118.in.ngrok.io/"+this.model_type +'/'+this.generation_length+'/'+this.prompt_text)
 			console.log(response)
 			this.session_history.push(response);
 		} 
