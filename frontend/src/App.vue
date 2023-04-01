@@ -58,8 +58,7 @@ export default {
 	methods: {
 		
 		async fetch_completion() {
-			api_endpoint = "https://64a6-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io "
-			const request = new Request(api_endpoint, {
+			const request = new Request("https://64a6-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io/", {
 				method: "GET",
 				body: JSON.stringify({
 					"model": this.model_type,
