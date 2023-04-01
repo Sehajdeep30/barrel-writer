@@ -31,7 +31,7 @@
 					v-model="generation_length">
 			</label>
 
-			<button class="outline" @click="fetch_completion()">get suggestion</button>
+			<button class="outline" @click="fetch_suggestion()">get suggestion</button>
 		</div>
 	</div>
 </template>
