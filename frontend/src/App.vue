@@ -31,7 +31,7 @@
 					v-model="generation_length">
 			</label>
 
-			<button class="outline" @click="fetch_completion()">get suggestion</button>
+			<button class="outline" @click="fetch_suggestion()">get suggestion</button>
 		</div>
 	</div>
 </template>
@@ -74,7 +74,8 @@ export default {
 				false
 			); // false for synchronous request
     		xmlHttp.send( null );
-    		return xmlHttp.responseText;
+			console.log(JSON.parse(xmlHttp.responseText))
+    		this.session_history.push(JSON.parse(xmlHttp.responseText))
 		}
 	},
 
