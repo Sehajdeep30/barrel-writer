@@ -5,7 +5,7 @@
 		v-for="msg in session_history"
 	>
 		<p style="display: inline;"> {{ msg["prompt"] }}</p>
-		<mark style="display: inline;">{{ msg["completion"] }}</mark>
+		<mark style="display: inline;">{{ msg["completion"].slice(msg["prompt"].length + 1) }}</mark>
 		<br><br>
 	</div>
 
@@ -57,14 +57,12 @@ export default {
 				method: "POST",
 				body: JSON.stringify({
 					"model": this.model_type,
-					"length": this.generation_length,
+					"length": parseInt(this.generation_length),
 					"prompt": this.prompt_text
 				})
 			});
 
 			const response = await fetch(request)
-
-			//console.log(await response.json())
 
 			this.session_history.push(await response.json())
 		},
