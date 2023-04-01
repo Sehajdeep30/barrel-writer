@@ -22,12 +22,17 @@ tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
 OUTPUT_LENGTH = 50
 
 # Generate text from a prompt
-@app.get("/completion/{model}/{prompt}")
-async def generate(prompt: str, model: str) -> dict:
+@app.get("/{model}/{length}/{prompt}")
+async def generate(model: str, length: int, prompt: str) -> dict:
+    if length > 100:
+        length = 100
+    if length < 0 or length < 10:
+        length = 10
+
     input_ids = tokenizer.encode(prompt, return_tensors='pt')
 
     if model == "scifi":
-        output = scifi_model.generate(input_ids, max_length=OUTPUT_LENGTH, do_sample=True, pad_token_id=tokenizer.eos_token_id)
+        output = scifi_model.generate(input_ids, max_length=length, do_sample=True, pad_token_id=tokenizer.eos_token_id)
         generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
 
     elif model == "philosophy":
