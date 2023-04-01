@@ -42,12 +42,7 @@ import axios from 'axios';
 export default {
 	data() {
 		return {
-			session_history: [
-				{
-					"prompt": "prompt 1",
-					"completion": "completion 1"
-				}
-			],
+			session_history: [],
 
 			prompt_text: "",
 			generation_length: 50,
@@ -58,7 +53,7 @@ export default {
 	methods: {
 		
 		async fetch_completion() {
-			const request = new Request("https://f433-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io", {
+			const request = new Request("http://localhost:8000/", {
 				method: "POST",
 				body: JSON.stringify({
 					"model": this.model_type,
@@ -69,7 +64,26 @@ export default {
 
 			const response = await fetch(request)
 
-			console.log(response)
+			//console.log(await response.json())
+
+			this.session_history.push(await response.json())
+		},
+
+		async fetch_suggestion() {
+			fetch("https://1c1f-2405-204-1483-d13d-52d4-d327-cff0-c84c.in.ngrok.io", {
+			  method: 'POST',
+			  headers: {
+			    'Content-Type': 'application/json'
+			  },
+			  body: JSON.stringify({
+				"model": this.model_type,
+				"length": this.generation_length,
+				"prompt": this.prompt_text
+			  })
+			})
+			.then(response => response.json())
+			.then(data => console.log(data))
+			.catch(error => console.error(error))
 		}
 
 	},
