@@ -5,14 +5,15 @@
 				<li @click="toggleNotebookDialog()"><strong>Barrel Writer</strong></li>
 			</ul>
 			<ul>
-			    <li><a class="secondary" @click="toggleSettingsDialog()">settings</a></li>
-			    <li><a href="https://github.com/s-m33r/barrel-writer">source</a></li>
-			    <li><a href="#">about</a></li>
+			    <li><a class="secondary" @click="toggleSettingsDialog()"><strong>settings</strong></a></li>
+			    <li><a href="https://github.com/s-m33r/barrel-writer" target="_blank">source</a></li>
+			    <li><a href="https://exciting-mercury-836.notion.site/Barrel-An-AI-Based-Writing-Assist-28f61c06f83a4118a2fde1511869bce6" target="_blank">about</a></li>
 			</ul>
 		</nav>
 	</div>
 
 	<!-- NOTEBOOKS DIALOG -->
+	<!--
 	<dialog open v-show="display_notebooks_page">
 		<article>
 			<a class="close" @click="toggleNotebookDialog()"></a>
@@ -20,6 +21,7 @@
 			<a v-for="(notebook, index) in notebooks">notebook {{ index }}</a>
 		</article>
 	</dialog>
+	-->
 
 
 	<!-- LIST OF PROMPTS AND GENERATIONS FOR SELECTED SESSION -->
@@ -36,9 +38,15 @@
 
 	<!-- SETTINGS DIALOG -->
 	<dialog open v-show="display_settings_page">
-
 		<article>
 			<a class="close" @click="toggleSettingsDialog()"></a>
+
+			<blockquote>
+			"Words are the model, words are the tools, words are the boards, words are the nails."
+			  <footer>
+			    <cite>—Richard Rhodes</cite>
+			  </footer>
+			</blockquote>
 
 			<select id="model" required v-model="model_type">
 				<option value="" selected>choose a model</option>
@@ -79,7 +87,7 @@
 		<br><br>
 
 		<p style="opacity: 0.5; font-size: 0.6em;">
-			<strong>NOTE:</strong> everything you type here is stored locally on your computer. You can clear your notebook by clicking the "clear notebook" button in the settings dialog.<br> This is a proof of concept. The models are not perfect and may generate nonsensical text. Please do not use this for anything serious.
+			<strong>NOTE:</strong><br>Everything you type here is stored locally on your computer. You can clear your notebook by clicking the "clear notebook" button in the settings dialog.<br> This is a proof of concept. The models are not perfect and may generate nonsensical text. Please do not use this for anything serious.
 		</p>
 	</div>
 
@@ -95,9 +103,6 @@ export default {
 			status_waiting_for_response: false,
 
 			session_history: [],
-
-			notebooks: [],
-			NO_OF_NOTEBOOKS: 10,
 
 			prompt_text: "",
 			generation_length: 50,
@@ -147,7 +152,6 @@ export default {
 			const response = await fetch(request)
 
 			this.session_history.push(await response.json())
-
 			this.status_waiting_for_response = false
 		},
 
@@ -175,17 +179,21 @@ export default {
 			placeholder: "Type here...\nPress Alt+Enter to get a suggestion (or click the button below)"
 		})
 
+		/*
 		// load notebooks from LocalStorage, create if doesn't exit
 		if (localStorage.getItem("notebooks") == null) {
-			localStorage.setItem("notebooks", JSON.stringify(this.notebooks))
+			localStorage.setItem("notebooks", JSON.stringify(this.session_history))
 		} else {
-			this.notebooks = JSON.parse(localStorage.getItem("notebooks"))
+			this.session_history = JSON.parse(localStorage.getItem("notebooks"))
 		}
+		*/
 	},
 
 	beforeUnmount() {
+		/*
 		// save notebooks to LocalStorage
-		localStorage.setItem("notebooks", JSON.stringify(this.notebooks))
+		localStorage.setItem("notebooks", JSON.stringify(this.session_history))
+		*/
 	}
 
 }
