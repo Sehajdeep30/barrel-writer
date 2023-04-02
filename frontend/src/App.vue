@@ -2,7 +2,7 @@
 	<div>
 		<nav>
 			<ul>
-				<li @click="toggleNotebookDialog()"><strong>Barrel</strong></li>
+				<li @click="toggleNotebookDialog()"><strong>Barrel Writer</strong></li>
 			</ul>
 			<ul>
 			    <li><a class="secondary" @click="toggleSettingsDialog()">settings</a></li>
