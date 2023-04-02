@@ -2,62 +2,85 @@
 	<div>
 		<nav>
 			<ul>
-				<li><strong>barrel</strong></li>
+				<li @click="toggleNotebookDialog()"><strong>Barrel</strong></li>
 			</ul>
 			<ul>
-			    <li><button class="secondary outline" @click="toggleSettingsDialog()">settings</button></li>
+			    <li><a class="secondary" @click="toggleSettingsDialog()">settings</a></li>
 			    <li><a href="https://github.com/s-m33r/barrel-writer">source</a></li>
 			    <li><a href="#">about</a></li>
 			</ul>
 		</nav>
 	</div>
 
-	<section>
-		<div
-			style="box-shadow: none;"
-			v-for="msg in session_history"
-		>
-			<p style="display: inline;"> {{ msg["prompt"] }}</p>
-			<mark style="display: inline;">{{ msg["completion"].slice(msg["prompt"].length + 1) }}</mark>
-			<br><br>
-		</div>
-	</section>
+	<!-- NOTEBOOKS DIALOG -->
+	<dialog open v-show="display_notebooks_page">
+		<article>
+			<a class="close" @click="toggleNotebookDialog()"></a>
 
+			<a v-for="(notebook, index) in notebooks">notebook {{ index }}</a>
+		</article>
+	</dialog>
+
+
+	<!-- LIST OF PROMPTS AND GENERATIONS FOR SELECTED SESSION -->
+	<div
+		style="box-shadow: none;"
+		v-for="msg in session_history"
+	>
+		<p style="display: inline;"> {{ msg["prompt"] }}</p>
+		<mark style="display: inline;">{{ msg["completion"].slice(msg["prompt"].length + 1) }}</mark>
+		<br>
+		<a @click="remove(msg)">delete</a>
+		<br><br>
+	</div>
+
+	<!-- SETTINGS DIALOG -->
 	<dialog open v-show="display_settings_page">
 
 		<article>
 			<a class="close" @click="toggleSettingsDialog()"></a>
 
 			<select id="model" required v-model="model_type">
-				<option value="" selected>select a model</option>
-  				<option value="litreature">Literary</option>
+				<option value="" selected>choose a model</option>
 				<option value="scifi">SciFi and Speculative Fiction</option>
+  				<option value="litreature">Literary</option>
   				<option value="philosophy">Philosophy</option>
   				<option value="academia">Academia</option>
 			</select>
 
-			<label for="output-length">Output Length (10-100 chars)
+			<label for="output-length">Output Length (10-100 characters)
 				<input
 					type="range"
 					min="10" max="100"
 					id="range"
 					v-model="generation_length">
 			</label>
+
+			<button class="secondary outline" @click="clearSession()">clear notebook</button>
 		</article>
 
 	</dialog>
 
-	<div style="position: sticky; bottom: 0;">
+	<!-- MAIN EDITOR -->
+	<div>
 		<div @keydown.alt.enter="status_waiting_for_response = !status_waiting_for_response; fetch_completion()">
 			<textarea id="text-input" v-model="prompt_text">
 			</textarea>
 		</div>
+
+		<br>
 		
 		<progress v-show="status_waiting_for_response"></progress>
-		<button class="secondary outline"
+		<div role="button" class="secondary outline"
 			@click="status_waiting_for_response = !status_waiting_for_response; fetch_completion()"
 			v-show="!status_waiting_for_response"
-		>get suggestion</button>
+		>get suggestion</div>
+
+		<br><br>
+
+		<p style="opacity: 0.5; font-size: 0.6em;">
+			<strong>NOTE:</strong> everything you type here is stored locally on your computer. You can clear your notebook by clicking the "clear notebook" button in the settings dialog.<br> This is a proof of concept. The models are not perfect and may generate nonsensical text. Please do not use this for anything serious.
+		</p>
 	</div>
 
 </template>
@@ -67,10 +90,14 @@ export default {
 	data() {
 		return {
 			display_settings_page: false,
+			display_notebooks_page: false,
 
 			status_waiting_for_response: false,
 
 			session_history: [],
+
+			notebooks: [],
+			NO_OF_NOTEBOOKS: 10,
 
 			prompt_text: "",
 			generation_length: 50,
@@ -83,12 +110,27 @@ export default {
 			this.display_settings_page = !this.display_settings_page
 		},
 
+		toggleNotebookDialog() {
+			this.display_notebooks_page = !this.display_notebooks_page
+		},
+
 		toggleBoolStatus(status) {
 			this[status] = !this[status]
+		},
+
+		remove(obj) {
+			const index = this.session_history.indexOf(obj);
+			if (index > -1) { // only splice array when item is found
+				this.session_history.splice(index, 1); // 2nd parameter means remove one item only
+			}
 		},
 		
 		async fetch_completion() {
 			if (this.input_element.value() == "" || this.model_type == "") {
+				if (this.model_type == "") {
+					alert("Please select a model from settings")
+				}
+
 				this.status_waiting_for_response = false
 				return
 			}
@@ -107,11 +149,16 @@ export default {
 			this.session_history.push(await response.json())
 
 			this.status_waiting_for_response = false
+		},
+
+		clearSession() {
+			this.session_history = []
 		}
 
 	},
 
 	mounted() {
+		// Set up SimpleMDE editor
 		this.input_element = new SimpleMDE({
 			autofocus: true,
 			element: document.getElementById("text-input"),
@@ -120,12 +167,25 @@ export default {
 				uniqueId: "simpleMDE_autosave_data",
 				delay: 1000,
 			},
+
 			spellChecker: false,
 			toolbar: false,
 			status: false,
 
 			placeholder: "Type here...\nPress Alt+Enter to get a suggestion (or click the button below)"
 		})
+
+		// load notebooks from LocalStorage, create if doesn't exit
+		if (localStorage.getItem("notebooks") == null) {
+			localStorage.setItem("notebooks", JSON.stringify(this.notebooks))
+		} else {
+			this.notebooks = JSON.parse(localStorage.getItem("notebooks"))
+		}
+	},
+
+	beforeUnmount() {
+		// save notebooks to LocalStorage
+		localStorage.setItem("notebooks", JSON.stringify(this.notebooks))
 	}
 
 }
